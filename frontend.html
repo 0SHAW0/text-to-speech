@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Text to Speech | FastAPI</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 60px;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+
+    textarea {
+      background-color: #1e1e1e;
+      color: #ffffff;
+      border: 1px solid #333;
+      border-radius: 12px;
+      width: 70%;
+      padding: 15px;
+      font-size: 16px;
+      resize: none;
+    }
+
+    button {
+      background-color: #2e2e2e;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 24px;
+      margin-top: 20px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #3a3a3a;
+    }
+
+    audio {
+      margin-top: 30px;
+      border-radius: 20px;
+      background-color: #1e1e1e;
+    }
+  </style>
+</head>
+<body>
+  <h1>Text to Speech App</h1>
+
+  <textarea id="text" rows="4" placeholder="Enter your text here..."></textarea>
+  <br>
+  <button type="button" onclick="generateAudio()">Convert</button>
+
+  <audio id="player" controls></audio>
+
+  <script>
+    async function generateAudio() {
+      const text = document.getElementById("text").value.trim();
+      const player = document.getElementById("player");
+
+      if (!text) {
+        alert("Please enter some text.");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/speak", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ text })
+        });
+
+        if (!response.ok) {
+          throw new Error("Backend response was not OK.");
+        }
+
+        const blob = await response.blob();
+        const audioUrl = URL.createObjectURL(blob);
+
+        player.pause();
+        player.src = "";
+        player.src = audioUrl;
+        player.load();
+        player.play();
+
+        
+        
+
+      } catch (err) {
+        console.error("Fetch Error:", err);
+        alert("Something went wrong: Failed to fetch");
+      }
+    }
+  </script>
+</body>
+</html>

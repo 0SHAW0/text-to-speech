@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pydantic
+torch>=2.0.0
+TTS>=0.22.0
+soundfile
